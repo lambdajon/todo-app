@@ -1,0 +1,1 @@
+export { default as TasksCtrl } from "./TasksController";
