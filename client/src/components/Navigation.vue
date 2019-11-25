@@ -3,7 +3,6 @@
         <el-menu class="el-menu-demo" mode="horizontal" @select="handleSelect" :router="true" :default-active="activeLink">
             <el-menu-item index="/" exact>Home</el-menu-item>
             <el-menu-item index="/tasks">Tasks</el-menu-item>
-            <el-menu-item index="/tasks/create">Create new task</el-menu-item>
         </el-menu>
     </div>
 </template>

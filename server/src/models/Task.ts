@@ -5,6 +5,8 @@ export interface ITask extends Document {
     description?: string,
     color?: string,
     important?: boolean,
+    order_id: number,
+    group?: any
 }
 
 const TaskSchema = new Schema({
@@ -13,7 +15,11 @@ const TaskSchema = new Schema({
         required: "title is required",
         index: true,
     },
-    status:{
+    order_id: {
+        type: Number,
+        default: 1,
+    },
+    status: {
         type: Boolean,
         default: false,
     },
@@ -23,12 +29,17 @@ const TaskSchema = new Schema({
     },
     color: {
         type: String,
-        required: "color is required",
+        required: false,
     },
     important: {
         type: Boolean,
         default: false,
     },
+    group_id: {
+        type: Schema.Types.ObjectId,
+        ref: "Group"
+    }
+
 },
     {
         versionKey: false,

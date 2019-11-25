@@ -1,70 +1,145 @@
 <template>
-    <div  class="tasks" v-loading="tasks.loading">
-            <current-task v-if="showTask" :show="showTask" :current="currentTask" :close="closeCurrent"></current-task>
-            <el-row :gutter="20" type="flex" class="task-list" justify="start">
-                <task-item v-for="task in tasks.data" :key="task._id" :task="task" :showCurrentTask="showCurrentTask"></task-item>
-            </el-row>
-        
+    <div>
+        <!-- <draggable tag="el-row"  v-model="tasksList" :move="checkMove" :component-data="getComponentData()"> -->
+                <!-- <el-collapse-item v-for="e in tasksList" :title="e.title"  :key="e._id">
+                    <div>{{e.description}}</div>
+                </el-collapse-item> -->
+                <!-- <task-group  v-for="task in tasksList" :key="task._id" :task="task" :showCurrentTask="showCurrentTask"></task-group> -->
+                <el-row >
+                    <draggable
+                        class="list-group"
+                        tag="ul"
+                        v-model="tasksList"
+                        v-bind="dragOptions"
+                        @start="drag = true"
+                        @end="drag = false"
+                        @change="log"
+                        :move="checkMove"
+                    >
+                        <transition-group type="transition" :name="!drag ? 'flip-list' : null">
+                            <task-group v-for="task in tasksList" :key="task._id" :task="task"></task-group>
+                        </transition-group>
+                        
+                    </draggable>
+                    <create-group ></create-group>
+                </el-row>
+                
+            <!-- </draggable> -->
     </div>
 </template>
 
 <script>
-import TaskItem from "./components/TaskItem";
-import CurrentTask from "./components/CurrentTask";
-import tasks from "@/http/tasks";
+import tasks from "@/http/tasks"
+import taskGroup from "./components/TaskGroups"
+import createGroup from "./components/CreateGroup"
+import draggable from 'vuedraggable'
+import { log } from 'util'
 export default {
     data(){
         return{
-            showTask: false,
-            currentTask: null,
+            drag: false
         }
     },
     computed:{
-        tasks(){
-            return this.$store.getters.tasks
+        tasksList:{
+            get(){
+                return this.$store.getters.tasks.data
+
+            },
+            set(value){
+                // console.log(value, );
+
+                this.$store.dispatch("SET_SORT_TASKS", value);
+            }
         },
+        dragOptions() {
+            return {
+                animation: 200,
+                group: "description",
+                disabled: false,
+                ghostClass: "ghost"
+            };
+        }
+
     },
     methods:{
-        showCurrentTask(id){
-            //
-            tasks.show(id).then(res => {
-                if(res.status === 200){
-                    this.currentTask = res.data
-                    this.showTask = true;
-                }
-            })
-
+        
+        log(e){
+            // console.log(event);
+            // console.log(this.drag)
         },
-        closeCurrent(){
-            this.showTask = false;
+        checkMove(evt,e){
+            // console.log(evt.draggedContext)
+            const index = evt.draggedContext.index;
+            const futureIndex = evt.draggedContext.futureIndex;
+            if(this.drag){
+                // console.log("index",this.tasksList[index])
+                // console.log("futureIndex",this.tasksList[futureIndex])
+                // for(let start = index; index )
+                console.log("-------------------")
+                // console.log(index);
+                // console.log(futureIndex);
+                
+                if(index < futureIndex){
+                    let orders = [];
+                    for(let start = index; start <= futureIndex; start++ ){
+                        orders.push({_id: this.tasksList[start]._id, order_id: this.tasksList[start].order_id})
+                    }
+                    // console.log(orders)
+                }
+            }
         }
     },
     components:{
-        taskItem: TaskItem,
-        currentTask: CurrentTask
+        taskGroup,
+        createGroup,
+        draggable,
     },
     mounted(){
-        this.$store.dispatch("SET_TASKS");
+        this.$store.dispatch("SET_GROUPS_WITH_TASKS");
     }
 };
 </script>
 
 <style scoped >
-    .tasks{
+
+    .flip-list-move {
+        transition: transform 0.5s;
+    }
+    .no-move {
+        transition: transform 0s;
+    }
+    .ghost {
+        opacity: 0.5;
+        background: #c8ebfb;
+    }
+    .list-group > span {
+        min-height: 20px;
         display: flex;
-        justify-content: center;
-        width: 100%;
-    }
-    .task-list{ 
+        justify-content: start;
         flex-wrap: wrap;
-        width: 90%;
-        margin-top: 2em;
     }
+    .list-group-item {
+        cursor: move;
+    }
+    .list-group-item i {
+        cursor: pointer;
+    }
+
     .el-row {
         margin-bottom: 20px;
+        display: flex;
+        justify-content: start;
+        /* align-items: center; */
+        flex-wrap: wrap;
+        width: 100%;
     }
     .el-col {
         border-radius: 4px;
+        margin-bottom: 20px;
+        width: auto;
+        flex-wrap: wrap;
+
     }
     .bg-purple-dark {
         background: #99a9bf;

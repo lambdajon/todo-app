@@ -1,9 +1,9 @@
 import { Router, Request, Response } from "express";
-import { TasksCtrl } from "../controllers"
+import { TasksCtrl, GroupCtrl } from "../controllers"
 
 
 const TaskController = new TasksCtrl();
-
+const GroupController = new GroupCtrl();
 const createRouter = (router: Router) => {
     router.get("/", (req: Request, res: Response) => {
         res.json({
@@ -16,6 +16,10 @@ const createRouter = (router: Router) => {
     router.get("/tasks/show/:id", TaskController.show);
     router.delete("/tasks/delete/:id", TaskController.delete);
     router.patch("/tasks/done/:id", TaskController.setDone);
+    router.patch("/tasks/change_order", TaskController.changeOrder)
+    router.get("/groups/list", GroupController.find);
+    router.post("/groups/create", GroupController.create);
+    router.patch("/groups/change_order", GroupController.changeOrder);
 
     return router;
 }

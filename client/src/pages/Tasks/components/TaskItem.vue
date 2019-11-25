@@ -1,17 +1,17 @@
 <template>
-    <el-col :span="6"  >
+    <el-col :span="6" style="margin-left:20px; margin-right:20px" >
         
         <el-card class="box-card">
             <div slot="header" class="clearfix">
                 <span>{{task.title}}</span> 
             </div>
-            <div  class="text item">{{task.description}}</div>
+            <!-- <div  class="text item">{{task.description}}</div> -->
             <div class="action-buttons">
                 <el-button type="primary" icon="el-icon-view" class="button" size="small" @click="showCurrentTask(task._id)" >Show</el-button>
             </div>
-            <div class="bottom clearfix">
+            <!-- <div class="bottom clearfix">
                 Created: <time class="time">{{ new Date(task.createdAt).toISOString().slice(0,10) }}</time>
-            </div>
+            </div> -->
             
         </el-card>
     </el-col>
